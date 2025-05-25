@@ -50,7 +50,7 @@ public class CourierCreationTest {
         courierId = loginResponse.jsonPath().getString("id");
 
         Response duplicateResponse = steps.createCourier(courier);
-        steps.verifyCourierCreationError(duplicateResponse, SC_CONFLICT, "Этот логин уже используется");
+        steps.verifyCourierCreationError(duplicateResponse, SC_CONFLICT, "Этот логин уже используется. Попробуйте другой.");
     }
 
     @Test
