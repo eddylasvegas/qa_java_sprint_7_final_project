@@ -16,7 +16,7 @@ import java.util.List;
 public class OrderCreationTest {
     private final OrderTestSteps steps = new OrderTestSteps();
     private final List<String> colors;
-    private String trackNumber;
+    private Response orderResponse;
 
     public OrderCreationTest(List<String> colors) {
         this.colors = colors;
@@ -48,15 +48,17 @@ public class OrderCreationTest {
                 colors
         );
 
-        Response response = steps.createOrder(order);
-        steps.verifyOrderTrackExists(response);
-        trackNumber = response.jsonPath().getString("track");
+        orderResponse = steps.createOrder(order);
+        steps.verifyOrderTrackExists(orderResponse);
     }
 
     @After
     public void tearDown() {
-        if (trackNumber != null) {
-            steps.cancelOrder(trackNumber);
+        if (orderResponse != null) {
+            String trackNumber = orderResponse.jsonPath().getString("track");
+            if (trackNumber != null) {
+                steps.cancelOrder(trackNumber);
+            }
         }
     }
 }
