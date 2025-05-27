@@ -25,6 +25,10 @@ public class CourierCreationTest {
 
     @After
     public void tearDown() {
+
+        Response loginResponse = steps.loginCourier(courier); //пытаемся авторизоваться, если тест упал
+        courierId = loginResponse.jsonPath().getString("id");
+
         if (courierId != null) {
             steps.deleteCourier(courierId);
         }
@@ -36,9 +40,6 @@ public class CourierCreationTest {
     public void testSuccessfulCourierCreation() {
         Response response = steps.createCourier(courier);
         steps.verifyCourierCreatedSuccessfully(response);
-
-        Response loginResponse = steps.loginCourier(courier);
-        courierId = loginResponse.jsonPath().getString("id");
     }
 
     @Test
@@ -46,8 +47,6 @@ public class CourierCreationTest {
     @Description("Проверяет, что нельзя создать двух одинаковых курьеров")
     public void testDuplicateCourierCreation() {
         steps.createCourier(courier);
-        Response loginResponse = steps.loginCourier(courier);
-        courierId = loginResponse.jsonPath().getString("id");
 
         Response duplicateResponse = steps.createCourier(courier);
         steps.verifyCourierCreationError(duplicateResponse, SC_CONFLICT, "Этот логин уже используется. Попробуйте другой.");
