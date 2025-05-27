@@ -71,4 +71,13 @@ public class CourierLoginTest {
         Response response = steps.loginCourier(noPasswordCourier);
         steps.verifyCourierCreationError(response, SC_BAD_REQUEST, "Недостаточно данных для входа");
     }
+
+    @Test
+    @DisplayName("Авторизация без логина")
+    @Description("Проверяет, что система возвращает ошибку при отсутствии логина")
+    public void testLoginWithoutLogin() {
+        Courier noLoginCourier = new Courier("", courier.getPassword(), null);
+        Response response = steps.loginCourier(noLoginCourier);
+        steps.verifyCourierCreationError(response, SC_BAD_REQUEST, "Недостаточно данных для входа");
+    }
 }
