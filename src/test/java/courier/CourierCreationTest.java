@@ -25,12 +25,15 @@ public class CourierCreationTest {
 
     @After
     public void tearDown() {
-
-        Response loginResponse = steps.loginCourier(courier); //пытаемся авторизоваться, если тест упал
-        courierId = loginResponse.jsonPath().getString("id");
-
-        if (courierId != null) {
-            steps.deleteCourier(courierId);
+        // Пытаемся удалить курьера только если у него есть логин и пароль
+        if (courier.getLogin() != null && courier.getPassword() != null) {
+            Response loginResponse = steps.loginCourier(courier); //авторизуемся если тест упал
+            if (loginResponse.statusCode() == SC_OK) { // 200 OK
+                courierId = loginResponse.jsonPath().getString("id");
+                if (courierId != null) {
+                    steps.deleteCourier(courierId);
+                }
+            }
         }
     }
 
@@ -57,6 +60,15 @@ public class CourierCreationTest {
     @Description("Проверяет, что нельзя создать курьера без указания логина")
     public void testCourierCreationWithoutLogin() {
         courier.setLogin(null);
+        Response response = steps.createCourier(courier);
+        steps.verifyCourierCreationError(response, SC_BAD_REQUEST, "Недостаточно данных для создания учетной записи");
+    }
+
+    @Test
+    @DisplayName("Создание курьера без пароля")
+    @Description("Проверяет, что нельзя создать курьера без указания пароля")
+    public void testCourierCreationWithoutPassword(){
+        courier.setPassword(null);
         Response response = steps.createCourier(courier);
         steps.verifyCourierCreationError(response, SC_BAD_REQUEST, "Недостаточно данных для создания учетной записи");
     }
