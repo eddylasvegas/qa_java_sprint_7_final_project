@@ -3,6 +3,7 @@ package api;
 import io.restassured.response.Response;
 import models.Courier;
 import models.Order;
+import models.CourierModel;
 
 import static io.restassured.RestAssured.given;
 
@@ -44,9 +45,11 @@ public class ScooterApiClient {
     }
 
     public Response cancelOrder(String track) {
+        CourierModel courierModel = new CourierModel(track);
+
         return given()
                 .spec(ApiConfig.getDefaultRequestSpec())
-                .body("{\"track\": \"" + track + "\"}")
+                .body(courierModel)  // Передаем объект вместо строки JSON
                 .put(ORDER_PATH + "/cancel");
     }
 }
